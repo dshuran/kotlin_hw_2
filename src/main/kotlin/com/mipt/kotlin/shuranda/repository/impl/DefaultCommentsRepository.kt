@@ -19,7 +19,7 @@ class DefaultCommentsRepository : CommentsRepository {
 
     override fun createComment(commentText: String): Comment {
         val createdComment = Comment(
-            id = Random.nextLong(),
+            id = Random.nextLong(1, Long.MAX_VALUE),
             text = commentText,
             createdAt = Instant.now().toString()
         )
