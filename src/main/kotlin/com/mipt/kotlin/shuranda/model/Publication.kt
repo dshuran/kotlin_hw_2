@@ -3,8 +3,9 @@ package com.mipt.kotlin.shuranda.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Comment(
+data class Publication(
     val id: Long,
-    val text: String,
-    val createdAt: String
+    var text: String,
+    val createdAt: String,
+    var editedAt: String
 )
