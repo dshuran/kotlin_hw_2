@@ -6,18 +6,20 @@ import java.time.Instant
 import kotlin.math.min
 import kotlin.random.Random
 
-const val kPageSize = 10
-
 class DefaultPublicationsRepository : PublicationsRepository {
+
+    companion object {
+        private const val DEFAULT_PAGE_SIZE = 10
+    }
 
     private val publications: MutableSet<Publication> = mutableSetOf()
     override fun getAllForPage(pageId: Long): Collection<Publication> {
 
-        val startIndex = (pageId.toInt() - 1) * kPageSize
+        val startIndex = (pageId.toInt() - 1) * DEFAULT_PAGE_SIZE
         if (startIndex >= publications.size) {
             return emptyList()
         }
-        val endIndex = min(pageId.toInt() * kPageSize, publications.size)
+        val endIndex = min(pageId.toInt() * DEFAULT_PAGE_SIZE, publications.size)
 
         return publications.toList().subList(
             startIndex,

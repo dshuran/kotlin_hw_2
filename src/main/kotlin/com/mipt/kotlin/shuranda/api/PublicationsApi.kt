@@ -9,7 +9,6 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
-import java.lang.Exception
 import java.time.Instant
 
 fun Application.publicationsApi() {
@@ -18,13 +17,9 @@ fun Application.publicationsApi() {
         val publicationsRepository by inject<PublicationsRepository>()
 
         get("/publications/all/{id}") {
-            try {
-                val publicationId = parsePublicationId(call)
-                val comments = publicationsRepository.getAllForPage(publicationId)
-                call.respond(comments)
-            } catch (ex: Exception) {
-                println(ex.message)
-            }
+            val publicationId = parsePublicationId(call)
+            val comments = publicationsRepository.getAllForPage(publicationId)
+            call.respond(comments)
         }
 
         get("/publication/{id}/get") {
@@ -65,6 +60,10 @@ fun Application.publicationsApi() {
     }
 }
 
+fun ApplicationCall.getPathParameter(name: String): String? {
+    return parameters[name]
+}
+
 fun parsePublicationId(call: ApplicationCall): Long {
-    return call.parameters["id"]?.toLong() ?: 0
+    return call.getPathParameter("id")?.toLong() ?: 0
 }
