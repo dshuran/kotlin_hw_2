@@ -2,7 +2,6 @@ package com.mipt.kotlin.shuranda.api
 
 import com.mipt.kotlin.shuranda.api.model.CreatePublicationRequest
 import com.mipt.kotlin.shuranda.api.model.EditPublicationRequest
-import com.mipt.kotlin.shuranda.model.User
 import com.mipt.kotlin.shuranda.repository.PublicationsRepository
 import io.ktor.http.*
 import io.ktor.server.application.*

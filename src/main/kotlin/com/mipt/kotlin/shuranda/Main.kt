@@ -1,6 +1,5 @@
 package com.mipt.kotlin.shuranda
 
-import com.mipt.kotlin.shuranda.api.publicationsApi
 import com.mipt.kotlin.shuranda.plugins.configureRouting
 import com.mipt.kotlin.shuranda.plugins.configureSecurity
 import com.typesafe.config.ConfigFactory
