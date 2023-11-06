@@ -9,7 +9,11 @@ data class User(
 
     val userName: String? = null,
 
-    var token: String? = null
+    var token: String? = null,
+
+    var userFirstName: String? = null,
+
+    var profileCreatedDate: String? = null
 
 
 )

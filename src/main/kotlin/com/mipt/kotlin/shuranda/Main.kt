@@ -23,7 +23,6 @@ fun main() {
         configureSecurity(secret=secret, issuer=issuer, audience=audience, myRealm=realm)
         configureServer()
         configureRouting(secret=secret, issuer=issuer, audience=audience)
-        publicationsApi()
     }.start(wait = true)
 }
 

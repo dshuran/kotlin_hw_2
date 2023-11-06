@@ -31,12 +31,13 @@ class DefaultPublicationsRepository : PublicationsRepository {
         return publications.find { it.id == id }
     }
 
-    override fun createPublication(publicationText: String): Publication {
+    override fun createPublication(publicationText: String, userName: String): Publication {
         val createdPublication = Publication(
             id = Random.nextLong(1, Long.MAX_VALUE),
             text = publicationText,
             createdAt = Instant.now().toString(),
-            editedAt = ""
+            editedAt = "",
+            creatorUserName = userName
         )
 
         publications.add(createdPublication)

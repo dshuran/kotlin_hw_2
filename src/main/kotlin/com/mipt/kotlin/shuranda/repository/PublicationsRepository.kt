@@ -8,5 +8,5 @@ interface PublicationsRepository {
 
     fun getById(id: Long): Publication?
 
-    fun createPublication(publicationText: String): Publication
+    fun createPublication(publicationText: String, userName: String): Publication
 }

@@ -18,19 +18,26 @@ import java.util.Date
 
 fun Application.routeLogin(secret: String, issuer: String, audience: String) {
     routing {
-        post("/token") {
+        post("/register") {
             val user: User = call.receive()
             val expireAfterAnHour = System.currentTimeMillis() + 3_600_000
+            val profileCreatedDate = Date().toString()
 
             val generatedToken = JWT.create()
                 .withAudience(audience)
                 .withIssuer(issuer)
                 .withClaim("userName", user.userName)
                 .withClaim("password", user.password)
+                .withClaim("userFirstName", user.userFirstName)
+                .withClaim("profileCreatedDate", profileCreatedDate)
                 .withExpiresAt(Date(expireAfterAnHour))
                 .sign(Algorithm.HMAC512(secret))
 
             user.token = generatedToken
+            user.profileCreatedDate = profileCreatedDate
+
+            // TODO: save data to local DB
+
             call.respond(HttpStatusCode.OK, user)
         }
 
