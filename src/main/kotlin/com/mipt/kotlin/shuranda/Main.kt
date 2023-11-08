@@ -28,6 +28,7 @@ fun main() {
 fun Application.configureServer() {
     install(Koin) {
         modules(publicationsModule)
+        modules(authModule)
     }
     install(ContentNegotiation) {
         json(Json {

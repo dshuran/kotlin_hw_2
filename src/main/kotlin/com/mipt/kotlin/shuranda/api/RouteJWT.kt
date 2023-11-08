@@ -2,53 +2,70 @@ package com.mipt.kotlin.shuranda.api
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.mipt.kotlin.shuranda.api.model.AuthRequest
 import com.mipt.kotlin.shuranda.model.User
+import com.mipt.kotlin.shuranda.repository.UsersRepository
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
-import io.ktor.server.auth.authenticate
-import io.ktor.server.auth.jwt.JWTPrincipal
-import io.ktor.server.auth.principal
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
-import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
+import org.koin.ktor.ext.inject
 import java.util.Date
 
 fun Application.routeLogin(secret: String, issuer: String, audience: String) {
+
+    val usersRepository by inject<UsersRepository>()
+
     routing {
         post("/register") {
-            val user: User = call.receive()
+            val authRequest: AuthRequest = call.receive()
             val expireAfterAnHour = System.currentTimeMillis() + 3_600_000
             val profileCreatedDate = Date().toString()
+
+            val user = User(userName = authRequest.login, password = authRequest.password)
 
             val generatedToken = JWT.create()
                 .withAudience(audience)
                 .withIssuer(issuer)
                 .withClaim("userName", user.userName)
                 .withClaim("password", user.password)
-                .withClaim("userFirstName", user.userFirstName)
-                .withClaim("profileCreatedDate", profileCreatedDate)
                 .withExpiresAt(Date(expireAfterAnHour))
                 .sign(Algorithm.HMAC512(secret))
 
             user.token = generatedToken
             user.profileCreatedDate = profileCreatedDate
 
-            // TODO: save data to local DB
+            usersRepository.saveByUsername(user)
 
             call.respond(HttpStatusCode.OK, user)
         }
 
-        authenticate {
-            get ("/token") {
-                val principal = call.principal<JWTPrincipal>()
-                val userName = principal!!.payload.getClaim("userName").asString()
-                val password = principal!!.payload.getClaim("password").asString()
+        post ("/login") {
+            val authRequest: AuthRequest = call.receive()
+            val expireAfterAnHour = System.currentTimeMillis() + 3_600_000
 
-                val user: User = User(userName = userName, password = password)
-                call.respond(HttpStatusCode.OK, user)
+            val user = usersRepository.getByUsername(authRequest.login)
+            if (
+                user != null &&
+                (authRequest.login == user.userName && authRequest.password == user.password)
+            ) {
+                val generatedToken = JWT.create()
+                    .withAudience(audience)
+                    .withIssuer(issuer)
+                    .withClaim("userName", user.userName)
+                    .withClaim("password", user.password)
+                    .withExpiresAt(Date(expireAfterAnHour))
+                    .sign(Algorithm.HMAC512(secret))
+
+                user.token = generatedToken
+                usersRepository.saveByUsername(user)
+
+                call.respond(user)
+            } else {
+                call.respond(HttpStatusCode.BadRequest)
             }
         }
     }
